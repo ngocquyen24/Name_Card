@@ -27,32 +27,45 @@ remove_filter('the_content', 'prepend_attachment');
 home_url('/view-user.php?id=' . $id);
 home_url('/detail-name-card.php?id=' . $id);
 
-add_action('init', function () {
-    if (isset($_GET['download_vcard']) && $_GET['download_vcard'] == '1' && isset($_GET['id'])) {
-        $user_id = intval($_GET['id']);
-        
-        // Lấy dữ liệu từ database
-        global $wpdb;
-        $table_user = $wpdb->prefix . 'user_cards';
-        $user = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_user WHERE id = %d", $user_id));
-        
-        if ($user) {
-            // Tạo nội dung vCard
-            $vcard = "BEGIN:VCARD\n";
-            $vcard .= "VERSION:3.0\n";
-            $vcard .= "FN:" . (!empty($user->name) ? esc_html($user->name) : 'N/A') . "\n";
-            $vcard .= "EMAIL:" . (!empty($user->email) ? esc_html($user->email) : 'N/A') . "\n";
-            $vcard .= "TEL:" . (!empty($user->phone) ? esc_html($user->phone) : 'N/A') . "\n";            
-            $vcard .= "END:VCARD\n";
 
-            // Thiết lập header để tải file
-            header('Content-Type: text/vcard');
-            header('Content-Disposition: attachment; filename="contact.vcf"');
-            echo $vcard;
-            exit;
-        }
+function enqueue_screenshot_scripts() {
+    // Tải thư viện html2canvas
+    wp_enqueue_script(
+        'html2canvas',
+        'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+        [],
+        null,
+        true
+    );
+
+    // Tải file custom JS
+    wp_enqueue_script(
+        'screenshot-script',
+        get_template_directory_uri() . '/assets/js/screenshot.js',
+        ['html2canvas'], // Phụ thuộc html2canvas
+        null,
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_screenshot_scripts');
+
+
+function enqueue_custom_scripts() {
+    wp_enqueue_script(
+        'main-js', // Tên handle
+        get_template_directory_uri() . '/assets/js/main.js', // Đường dẫn chính xác
+        [], // Phụ thuộc (nếu có)
+        null, // Phiên bản
+        true // Tải ở footer
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
+
+
+function vcard_template_redirect() {
+    if (get_query_var('download_vcard')) {
+        download_vcard();
+        exit;
     }
-});
-
-
-
+}
+add_action('template_redirect', 'vcard_template_redirect');

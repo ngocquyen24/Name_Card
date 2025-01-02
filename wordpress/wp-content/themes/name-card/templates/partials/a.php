@@ -63,4 +63,8 @@ $company = json_decode(get_query_var('company', '')); // Lấy company từ set_
             </div>
         </div>
     </form>
+    <button id="downloadPage" style="position: fixed; z-index: 9999; margin-top:300px; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+        Tải trang dưới dạng PNG
+    </button>
+
 </div>

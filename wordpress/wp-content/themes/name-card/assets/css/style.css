@@ -3,6 +3,24 @@
 	justify-content: center;
 	gap: 20px;
 	display: flex;
+
+}
+.name-card{
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	display: flex;
+	/* Khoảng cách giữa các thẻ */
+
+}
+
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
+	background-color: #e0e0e0;
 }
 
 /* Template A */

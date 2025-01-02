@@ -1,0 +1,10 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Nguyen Van A
+ORG:Happy Chicken
+TITLE:CEO
+TEL;TYPE=WORK,VOICE:+84-123-456-789
+EMAIL;TYPE=PREF,INTERNET:nguyenvana@example.com
+URL:https://example.com
+ADR;TYPE=WORK:;;123 Phan Dang Luu;Ho Chi Minh;TP.HCM;700000;Vietnam
+END:VCARD
