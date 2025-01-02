@@ -2,8 +2,8 @@
 /*
 Plugin Name: Company Card Manager
 Plugin URI: https://example.com
-Description: Plugin quản lý danh sách công ty có thể xem, sửa, xóa và hiển thị ra trang chính.
-Version: 1.1
+Description: Plugin quản lý danh sách công ty có thể xem, sửa và hiển thị ra trang chính.
+Version: 1
 Author: Your Name
 License: GPL2
 */
@@ -84,7 +84,8 @@ function cm_handle_image_upload($file)
     // Kiểm tra loại file (chỉ cho phép hình ảnh)
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
     if (!in_array($file['type'], $allowed_types)) {
-        return 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+        // return 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+        return false;  // Trả về false nếu loại tệp không hợp lệ
     }
 
     // Di chuyển file từ thư mục tạm thời vào thư mục đích
@@ -94,17 +95,7 @@ function cm_handle_image_upload($file)
         return basename($file_name);
     }
 
-    return 'File upload failed.';
-}
-// Xóa hình ảnh khỏi thư mục
-function cm_delete_image($image_url)
-{
-    $upload_dir = wp_upload_dir();
-    $image_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $image_url);
-
-    if (file_exists($image_path)) {
-        unlink($image_path);
-    }
+    return false;
 }
 
 // Giao diện thêm/sửa thông tin công ty
@@ -112,8 +103,10 @@ function cm_add_edit_form($id = 0)
 {
     global $wpdb;
     $table_name = $wpdb->prefix . 'company';
+    $error_message = '';
 
     $company = ['name' => '', 'address' => '', 'phone' => '', 'email' => '', 'profile' => '', 'image' => ''];
+
     if ($id > 0) {
         $company = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $id), ARRAY_A);
         if (!$company) {
@@ -131,64 +124,42 @@ function cm_add_edit_form($id = 0)
             'profile' => sanitize_textarea_field($_POST['profile']),
         ];
 
-        if (!empty($_FILES['image']['name'])) {
-            if (!empty($company['image'])) {
-                cm_delete_image($company['image']);
+      
+        
+        
+         // Kiểm tra và xử lý tải ảnh (nếu có)
+         if (!empty($_FILES['image']['name'])) {
+            $image_upload_result = cm_handle_image_upload($_FILES['image']);
+            if ($image_upload_result === false) {
+                // Nếu tệp không hợp lệ, lưu thông báo lỗi và không tiếp tục lưu dữ liệu
+                $error_message = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+                
+            } else {
+                // Nếu ảnh hợp lệ, lưu tên ảnh vào dữ liệu
+                $data['image'] = $image_upload_result;
             }
-            $data['image'] = cm_handle_image_upload($_FILES['image']);
         } else if ($id > 0) {
+            // Nếu không chọn ảnh mới, giữ ảnh cũ (khi là sửa)
             $data['image'] = $company['image'];
         }
 
-        if ($id > 0) {
-            $wpdb->update($table_name, $data, ['id' => $id]);
-        } else {
-            $wpdb->insert($table_name, $data);
+        // Nếu không có lỗi, lưu hoặc cập nhật dữ liệu vào cơ sở dữ liệu
+        if (empty($error_message)) {
+            if ($id > 0) {
+                // Cập nhật công ty đã tồn tại
+                $wpdb->update($table_name, $data, ['id' => $id]);
+            } else {
+                // Thêm mới công ty
+                $wpdb->insert($table_name, $data);
+            }
+            wp_redirect(admin_url('admin.php?page=company-card-manager'));
+            exit;
         }
-        wp_redirect(admin_url('admin.php?page=company-card-manager'));
-        exit;
+
     }
-?>
-    <div class="wrap">
-        <h1><?php echo $id > 0 ? 'Update Company' : 'Add Company'; ?></h1>
-        <form method="post" enctype="multipart/form-data">
-            <table class="form-table">
-                <tr>
-                    <th>Name</th>
-                    <td><input type="text" name="name" value="<?php echo esc_attr($company['name']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Address</th>
-                    <td><textarea name="address" required><?php echo esc_textarea($company['address']); ?></textarea></td>
-                </tr>
-                <tr>
-                    <th>Phone</th>
-                    <td><input type="text" name="phone" value="<?php echo esc_attr($company['phone']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td><input type="email" name="email" value="<?php echo esc_attr($company['email']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Profile</th>
-                    <td><textarea name="profile" required><?php echo esc_textarea($company['profile']); ?></textarea></td>
-                </tr>
-                <tr>
-                    <th>Image</th>
-                    <td>
-                        <input type="file" name="image">
-                        <?php if (!empty($company['image'])): ?>
-                            <p>Current Image:</p>
-                            <img src="<?php echo  wp_upload_dir()['baseurl'] . '/imagesCompany/'; ?><?php echo ($company['image']); ?>" alt="Company Image" style="max-width: 150px;">
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            </table>
-            <p><button type="submit" name="save_company" class="button button-primary">Save</button></p>
-        </form>
-        <a href="<?php echo admin_url('admin.php?page=company-card-manager'); ?>" class="button">Back</a>
-    </div>
-<?php
+
+    // Chuyển qua trang add và update 
+    include plugin_dir_path(__FILE__) . 'templates/addUpdate.php';
 }
 
 // Giao diện danh sách công ty
@@ -196,97 +167,12 @@ function cm_list_view()
 {
     global $wpdb;
     $table_name = $wpdb->prefix . 'company';
+    // Kiểm tra nếu đã có ít nhất 1 công ty
+    $has_company = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
 
-    if (isset($_POST['delete_company'])) {
-        $company = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", intval($_POST['company_id'])));
+    // Lấy công ty đầu tiên có id = 1
+    $company = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d LIMIT 1", 1));
 
-        if ($company) {
-            cm_delete_image($company->image);
-            $wpdb->delete($table_name, ['id' => intval($_POST['company_id'])]);
-        }
-        wp_redirect(admin_url('admin.php?page=company-card-manager'));
-        exit;
-    }
-
-    $company = $wpdb->get_results("SELECT * FROM $table_name");
-?>
-    <div class="wrap">
-        <h1>List Company</h1>
-        <a href="<?php echo admin_url('admin.php?page=company-card-manager&action=add'); ?>" class="button button-primary">Add Company</a>
-        <table class="widefat fixed" style="margin-top: 15px;">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Profile</th>
-                    <th>Image</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($company as $company): ?>
-                    <tr>
-                        <td><?php echo ($company->name); ?></td>
-                        <td><?php echo ($company->address);
-                            ?></td>
-                        <td><?php echo ($company->phone); ?></td>
-                        <td><?php echo ($company->email); ?></td>
-                        <td><?php echo ($company->profile); ?></td>
-                        <td>
-                            <?php if (!empty($company->image)): ?>
-                                <img src="<?php echo  wp_upload_dir()['baseurl'] . '/imagesCompany/'; ?><?php echo ($company->image); ?>" alt="Company Image" style="max-width: 100px;">
-                            <?php else: ?>
-                                <span>No Image</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <a href="<?php echo admin_url('admin.php?page=company-card-manager&action=edit&id=' . $company->id); ?>" class="button">Edit</a>
-                            <form method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this company?');">
-                                <input type="hidden" name="company_id" value="<?php echo $company->id; ?>">
-                                <button type="submit" name="delete_company" class="button button-danger">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-<?php
+    // Chuyển qua trang list
+    include plugin_dir_path(__FILE__) . 'templates/list.php';
 }
-
-// Shortcode hiển thị danh sách công ty trên trang chính
-function cm_front_view()
-{
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'company';
-    
-    // Lấy công ty có id = 1
-    $company = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", 1));
-
-    ob_start();
-?>
-    <div class="company-list">
-        <?php if (!empty($company)): ?>
-            <?php foreach ($company as $company): ?>
-                <div class="company-card">
-                    <?php if (!empty($company->image)): ?>
-                        <img src="<?php echo esc_url($company->image); ?>" alt="<?php echo esc_attr($company->name); ?>" style="max-width: 150px;">
-                    <?php endif; ?>
-                    <h3><?php echo esc_html($company->name); ?></h3>
-                    <p><strong>Address:</strong> <?php echo esc_html($company->address); ?></p>
-                    <p><strong>Phone:</strong> <?php echo esc_html($company->phone); ?></p>
-                    <p><strong>Email:</strong> <?php echo esc_html($company->email); ?></p>
-                    <p><strong>Profile:</strong> <?php echo esc_html($company->profile); ?></p>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No company found with ID = 1.</p>
-        <?php endif; ?>
-    </div>
-<?php
-    return ob_get_clean();
-}
-add_shortcode('company_list', 'cm_front_view');
-

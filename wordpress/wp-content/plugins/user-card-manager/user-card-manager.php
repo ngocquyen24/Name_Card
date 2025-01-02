@@ -30,6 +30,7 @@ function ncm_create_table()
         jobtitle varchar(100) NOT NULL,
         jobname varchar(100) NOT NULL,
         template varchar(100) NOT NULL,
+        image varchar(255) DEFAULT '' NOT NULL,
         PRIMARY KEY (id)
     ) $charset_collate;";
 
@@ -53,6 +54,8 @@ function ncm_admin_menu()
 }
 add_action('admin_menu', 'ncm_admin_menu');
 
+
+
 // Giao diện trang quản trị chính
 function ncm_admin_page()
 {
@@ -65,6 +68,40 @@ function ncm_admin_page()
         ncm_list_view();
     }
 }
+function cm_handle_image_upload_user($file)
+{
+    // Lấy đường dẫn của thư mục upload trong WordPress
+    $upload_dir = wp_upload_dir();
+
+    // Tạo đường dẫn tới thư mục 'imagesCompany'
+    $target_dir = $upload_dir['basedir'] . '/imagesUser/';
+
+    // Tạo thư mục nếu chưa tồn tại
+    if (!file_exists($target_dir)) {
+        mkdir($target_dir, 0755, true);
+    }
+
+    // Sanitize tên file để tránh các ký tự đặc biệt
+    $file_name = sanitize_file_name($file['name']);
+
+    // Tạo đường dẫn đầy đủ cho file upload
+    $target_file = $target_dir . basename($file_name);
+
+    // Kiểm tra loại file (chỉ cho phép hình ảnh)
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($file['type'], $allowed_types)) {
+        // return 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+        return false;  // Trả về false nếu loại tệp không hợp lệ
+    }
+
+    // Di chuyển file từ thư mục tạm thời vào thư mục đích
+    if (move_uploaded_file($file['tmp_name'], $target_file)) {
+        // Trả về URL của hình ảnh đã upload
+        return basename($file_name);
+    }
+
+    return false;
+}
 
 // Giao diện thêm/sửa name card
 function ncm_add_edit_form($id = 0)
@@ -72,7 +109,7 @@ function ncm_add_edit_form($id = 0)
     global $wpdb;
     $table_name = $wpdb->prefix . 'user_cards';
 
-    $card = ['name' => '', 'birthdate' => '', 'address' => '', 'email' => '', 'phone' => '', 'jobtitle' => '', 'jobname' => '', 'tempalte' => ''];
+    $card = ['name' => '', 'birthdate' => '', 'address' => '', 'email' => '', 'phone' => '', 'jobtitle' => '', 'jobname' => '', 'tempalte' => '', 'image' => ''];
     if ($id > 0) {
         $card = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $id), ARRAY_A);
         if (!$card) {
@@ -92,67 +129,46 @@ function ncm_add_edit_form($id = 0)
             'jobname' => sanitize_text_field($_POST['jobname']),
             'template' => sanitize_text_field($_POST['template']),
         ];
-        if ($id > 0) {
-            $wpdb->update($table_name, $data, ['id' => $id]);
-        } else {
-            $wpdb->insert($table_name, $data);
+
+
+
+        // Kiểm tra và xử lý tải ảnh (nếu có)
+        if (!empty($_FILES['image']['name'])) {
+            $image_upload_result = cm_handle_image_upload_user($_FILES['image']);
+            if ($image_upload_result === false) {
+                // Nếu tệp không hợp lệ, lưu thông báo lỗi và không tiếp tục lưu dữ liệu
+                $error_message = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+            } else {
+                // Nếu ảnh hợp lệ, lưu tên ảnh vào dữ liệu
+                $data['image'] = $image_upload_result;
+            }
+        } else if ($id > 0) {
+            // Nếu không chọn ảnh mới, giữ ảnh cũ (khi là sửa)
+            $data['image'] = $card['image'];
+        }
+
+        // Nếu không có lỗi, lưu hoặc cập nhật dữ liệu vào cơ sở dữ liệu
+        if (empty($error_message)) {
+            if ($id > 0) {
+                $wpdb->update($table_name, $data, ['id' => $id]);
+            } else {
+                $wpdb->insert($table_name, $data);
+            }
+            // Lệnh chuyển hướng trang 
+            wp_redirect(admin_url('admin.php?page=user-card-manager'));
+            exit;
         }
 
 
 
-        // Lệnh chuyển hướng trang 
-        wp_redirect(admin_url('admin.php?page=user-card-manager'));
-        exit;
+
+
+
+        
     }
-?>
-    <div class="wrap">
-        <h1><?php echo $id > 0 ? 'Update User Card' : 'Add User Card'; ?></h1>
-        <form method="post">
-            <table class="form-table">
-                <tr>
-                    <th>Name</th>
-                    <td><input type="text" name="name" value="<?php echo esc_attr($card['name']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Birthdate</th>
-                    <td><input type="date" name="birthdate" value="<?php echo esc_attr($card['birthdate'] ?? ''); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Address</th>
-                    <td><textarea name="address" required><?php echo esc_textarea($card['address'] ?? ''); ?></textarea></td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td><input type="email" name="email" value="<?php echo esc_attr($card['email']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Phone</th>
-                    <td><input type="text" name="phone" value="<?php echo esc_attr($card['phone']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Job title</th>
-                    <td><input type="text" name="jobtitle" value="<?php echo esc_attr($card['jobtitle']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Job name</th>
-                    <td><input type="text" name="jobname" value="<?php echo esc_attr($card['jobname']); ?>" required></td>
-                </tr>
-                <tr>
-                    <th>Template</th>
-                    <td>
-                        <select name="template" required>
-                            <option value="a" <?php selected($card['template'], 'Template 1'); ?>>Template A</option>
-                            <option value="b" <?php selected($card['template'], 'Template 2'); ?>>Template B</option>
-                            <option value="c" <?php selected($card['template'], 'Template 3'); ?>>Template C</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            <p><button type="submit" name="save_card" class="button button-primary">Save</button></p>
-        </form>
-        <a href="<?php echo admin_url('admin.php?page=user-card-manager'); ?>" class="button">Back</a>
-    </div>
-<?php
+
+    // Chuyển qua trang add và update 
+    include plugin_dir_path(__FILE__) . 'templates/addUpdate.php';
 }
 
 // Giao diện danh sách name card
@@ -168,51 +184,8 @@ function ncm_list_view()
     }
 
     $cards = $wpdb->get_results("SELECT * FROM $table_name");
-
-?>
-    <div class="wrap">
-        <h1>List User Card</h1>
-        <a href="<?php echo admin_url('admin.php?page=user-card-manager&action=add'); ?>" class="button button-primary">Add user card</a>
-        <table class="widefat fixed" style="margin-top: 15px;">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Birthdate</th>
-                    <th>Address</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Job title</th>
-                    <th>Job name</th>
-                    <th>Template</th>
-                    <th>Active</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($cards as $card): ?>
-                    <tr>
-                        <td><?php echo ($card->name); ?></td>
-                        <td><?php echo ($card->birthdate); ?></td>
-                        <td><?php echo ($card->address); ?></td>
-                        <td><?php echo ($card->email); ?></td>
-                        <td><?php echo ($card->phone); ?></td>
-                        <td><?php echo ($card->jobtitle); ?></td>
-                        <td><?php echo ($card->jobname); ?></td>
-                        <td><?php echo ($card->template); ?></td>
-                        <td>
-                            <a href="<?php echo admin_url('admin.php?page=user-card-manager&action=edit&id=' . $card->id); ?>" class="button">Update</a>
-                            <form method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user card?');">
-                                <input type="hidden" name="card_id" value="<?php echo $card->id; ?>">
-                                <button type="submit" name="delete_card" class="button button-danger">Delete</button>
-                            </form>
-                        </td>
-
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-<?php
+    // Chuyển qua trang list    
+    include plugin_dir_path(__FILE__) . 'templates/list.php';
 }
 
 // Shortcode hiển thị danh sách name card trên trang chính
@@ -221,10 +194,7 @@ function ncm_front_view()
     global $wpdb;
     $table_name = $wpdb->prefix . 'user_cards';
     $cards = $wpdb->get_results("SELECT * FROM $table_name");
-
-    ob_start();
     include plugin_dir_path(__FILE__) . 'templates/front-view.php';
-
 ?>
 
 <?php
