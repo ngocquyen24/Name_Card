@@ -1,0 +1,25 @@
+/*
+Theme Name: Name Card Theme
+Theme URI: https://example.com
+Author: Your Name
+Author URI: https://yourwebsite.com
+Description: A simple name-card WordPress theme.
+Version: 1.0
+License: GPLv2 or later
+Text Domain: name-card-theme
+*/
+
+/* CSS chính cho theme */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #333;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.btn-secondary {
+    margin: 5px;
+}
