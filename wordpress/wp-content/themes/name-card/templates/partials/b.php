@@ -2,7 +2,7 @@
 <?php
 
 /**
- * Template Name: Template A
+ * Template Name: Template B
  * Description: A template for displaying user details.
  */
 
@@ -16,24 +16,53 @@ $card = json_decode(get_query_var('card', ''));
 
 
 
-if (isset($_GET['download_vcard']) && !empty($user_id)) {
+if (isset($_GET['download_vcard']) && !empty($user_id) && !empty($company)) {
     if ($card) {
         $address .= esc_attr($card->address) . "\r\n"; // Dùng $card->address thay vì $card['address']
         $vcard = "BEGIN:VCARD\r\n";
         $vcard .= "VERSION:3.0\r\n";
-        $vcard .= "FN:" .esc_attr($card->name). "\r\n";
+        $vcard .= "FN:" . esc_attr($card->name) . "\r\n";
         $vcard .= "EMAIL:" . esc_attr($card->email) . "\r\n";
         $vcard .= "TEL:" . esc_attr($card->phone) . "\r\n";
+
+        if (!empty($company->image)) {
+            # code...
+        }
+
+        if (!empty($card->image)) {
+            $image_path = wp_upload_dir()['basedir'] . '/imagesUser/' . $card->image; // Đường dẫn hình ảnh trên server
+            if (file_exists($image_path)) {
+                $image_data = file_get_contents($image_path);
+                $base64_image = base64_encode($image_data);
+                $vcard .= "PHOTO;ENCODING=b;TYPE=JPEG:$base64_image\r\n"; // Sử dụng TYPE=JPEG cho định dạng ảnh JPEG
+            }
+        }
+
+
         // Thêm địa chỉ (1 dòng) vào vCard
         if (!empty($address)) {
             $vcard .= "ADR;TYPE=home:;;$address;;;;\r\n";
         }
         ////
-             // Thêm URL Google Maps nếu địa chỉ không rỗng
-             if (!empty($address)) {
-                $map_query = urlencode($address);
-                $vcard .= "URL:https://www.google.com/maps/search/?api=1&query=$map_query\r\n";
-            }
+        // Thêm URL Google Maps nếu địa chỉ không rỗng
+        if (!empty($address)) {
+            $map_query = urlencode($address);
+            $vcard .= "URL:https://www.google.com/maps/search/?api=1&query=$map_query\r\n";
+        }
+
+        if (!empty($company)) {
+            $vcard .= "ORG:" . esc_attr($company->name) . "\r\n"; // Tên công ty
+
+        }
+
+        if (!empty($user) && !empty($user->jobname)) {
+            $vcard .= "TITLE:" . esc_attr($user->jobname) . "\r\n"; // Thêm jobname từ company
+        }
+
+        if (!empty($jobname)) {
+            echo '<p class="jobname">Job: ' . esc_html($jobname) . '</p>'; // Hiển thị jobname trên giao diện
+        }
+
         $vcard .= "END:VCARD\r\n";
 
         header('Content-Type: text/vcard; charset=utf-8');
@@ -64,17 +93,21 @@ if (isset($_GET['download_vcard']) && !empty($user_id)) {
 </head>
 
 <body>
-
     <div class="name-card-container ">
         <div class="name-card">
             <div class="name-card-b front-card-b">
                 <div class="front">
+                    <div class="name-company">AIoT株式会社 - AIoT Inc</div>
                     <div class="row box-infor">
-                        <div class="col-md-5 line">
+                        <div class="col-5 line">
                             <div class="jobname"><?php echo esc_html($user->jobname); ?></div>
                             <div class="name-b"><?php echo esc_html($user->name); ?></div>
+                            <div class="my-image">
+                                <img src="<?php echo esc_url(wp_upload_dir()['baseurl'] . '/imagesUser/' . $user->image); ?>">
+                                <canvas class="qrcode" id="qrcode" style="width: 0; height: 0;"></canvas>
+                            </div>
                         </div>
-                        <div class="col-md-7">
+                        <div class="col-7">
                             <div class="mail-b gr-infor">
                                 <div class="icon-infor-b icon-mail"><i class="fa-solid fa-envelope"></i></div>
                                 <div class="infor-b"><?php echo esc_html($user->email); ?></div>
@@ -105,16 +138,13 @@ if (isset($_GET['download_vcard']) && !empty($user_id)) {
                                     </p>
                                 </div>
                             </div>
-                            <span class="location-b infor-b">
-
-
-                            </span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="name-card-b back-card-b">
                 <div class="back">
+                    <div class="name-company-back">AIoT株式会社 - AIoT Inc</div>
                     <div class="title-b">事業紹介</div>
                     <p>
                         IoT, AI, DX, システム統合、ローコード、システム開発 <br>
@@ -134,28 +164,38 @@ if (isset($_GET['download_vcard']) && !empty($user_id)) {
                 </div>
             </div>
         </div>
-
-    </form>
-</div>
-
-
-<button id="downloadPage"
-    style="position: fixed; z-index: 9999; margin-top:300px; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-    Tải trang dưới dạng PNG
-</button>
-<button
-    id="downloadVCard"
-    onclick="cardVcf(<?php echo intval($user_id); ?>)"
-    style="position: fixed; z-index: 9999; margin-top:350px; padding: 10px; background: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-    Tải Contact vCard
-</button>
-
-
+        <div class="photo">
+            <button id="downloadPage">
+                Download PNG
+            </button>
+            <button id="downloadVCard" onclick="cardVcf(<?php echo intval($user_id); ?>)">
+                Download vCard
+            </button>
+        </div>
     </div>
+
+
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="<?php echo get_template_directory_uri(); ?>/assets/js/main.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script>
+        const baseURL = "aiot-global.com/members/";
+        const userName = "<?php echo addslashes($user->name); ?>";
+
+        const data = baseURL + userName;
+        const qrCodeCanvas = document.getElementById("qrcode");
+        console.log("URL tạo QR Code:", data); // Debug để kiểm tra URL
+        QRCode.toCanvas(qrCodeCanvas, data, {
+            width: 70,
+            margin: 2
+        }, function(error) {
+            if (error) console.error("Lỗi tạo mã QR:", error);
+            else console.log("QR code đã được tạo!");
+        })
+    </script>
+
 
 </body>
 

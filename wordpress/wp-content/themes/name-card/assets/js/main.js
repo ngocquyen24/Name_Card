@@ -1,23 +1,28 @@
 function cardPNG(){
     document.getElementById('downloadPage').addEventListener('click', function () {
-        // Lấy phần tử bạn muốn chụp, ví dụ: phần tử có lớp 'name-card-container'
-        var elementToCapture = document.querySelector('.name-card');
-        
-        // Sử dụng html2canvas để chụp phần tử đó
-        html2canvas(elementToCapture, {
-            scale: 2,
-            useCORS: true, 
-            width: 1050,    
-            height: 320 ,
-        }).then(function (canvas) {
-        
-            const link = document.createElement('a');
-            link.download = 'profile.png';
-            link.href = canvas.toDataURL('image/png'); // Chuyển đổi canvas thành URL
-            link.click(); // Tải file
-        }).catch(function (error) {
-            console.error('Lỗi khi chụp phần tử:', error);
-        });
+        // Lấy phần tử bạn muốn chụp
+        var frontCard = document.querySelector('.front-card-b'); // Mặt trước
+        var backCard = document.querySelector('.back-card-b');  // Mặt sau
+
+        //upload imagees
+        function captureAndDownload(element, fileName) {
+            html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+            }).then(function (canvas) {
+                const link = document.createElement('a');
+                link.download = fileName;
+                link.href = canvas.toDataURL('image/png'); // canva -> url
+                link.click(); // .download
+            }).catch(function (error) {
+                console.error('Lỗi khi chụp phần tử:', error);
+            });
+        }
+
+        //font
+        captureAndDownload(frontCard, 'front-card.png');
+        //back
+        captureAndDownload(backCard, 'back-card.png');
     });
 }
 function cardVcf(user_id) {
