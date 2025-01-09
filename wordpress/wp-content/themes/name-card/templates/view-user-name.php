@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: View User
+Template Name: View User Name
 */
 
 // Tải WordPress header
@@ -9,11 +9,7 @@ use Rakit\Validation\Rules\Json;
 
 $user = $GLOBALS['custom_user'];
 
-// global $wpdb;
-
-// Lấy ID người dùng từ URL
-$user_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
+$user_id = $user->id;
 
 // Truy vấn dữ liệu từ bảng company database
 $table_name = $wpdb->prefix . 'company';
@@ -58,3 +54,15 @@ if ($overridden_template = locate_template($partial)) {
 }
 
 ?>
+
+
+
+
+
+
+
+
+
+
+
+

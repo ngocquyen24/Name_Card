@@ -1,30 +1,45 @@
 .name-card-container {
+	justify-content: center;
+	align-items: center;
+	height: 50vh;
+	padding-top: 15%;
+}
+
+.name-card {
 	display: flex;
 	justify-content: center;
 	gap: 20px;
-	display: flex;
 }
+
 
 /* Template A */
 .name-card-a {
-	width: 336px;
-	/* Tương ứng với 3.5 inch (336px = 3.5 * 96 DPI) */
-	height: 192px;
-	/* Tương ứng với 2 inch (192px = 2 * 96 DPI) */
+	width: 500px;
+	height: 300px;
 	font-family: Arial, sans-serif;
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 	border: 1px solid #ccc;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	padding: 10px;
+	padding: 20px;
 	display: flex;
 	overflow: hidden;
-	color: rgb(0, 0, 0);
 }
 
-.front-card-a {
-	background-image: url('../images/front-a.png');
+.triangle {
+	width: 100px;
+	height: 100px;
+	background: blue;
+	clip-path: polygon(50% 0%,
+			/* Đỉnh trên cùng */
+			100% 100%,
+			/* Góc dưới bên phải */
+			0% 100%
+			/* Góc dưới bên trái */
+		);
+	border-radius: 30%;
+	/* Bo tròn 3 góc */
 }
 
 .front {
@@ -41,10 +56,6 @@
 	background-image: url('../images/back-a.png');
 }
 
-.name-company {
-	font-weight: bold;
-}
-
 .space-company {
 	padding: unset;
 	margin: auto;
@@ -54,11 +65,26 @@
 	margin: 10px;
 }
 
+.my-image {
+	display: flex;
+	padding-left: 25px;
+}
+
+.my-image img {
+	width: 60px;
+	height: fit-content;
+}
 
 
 
 
 
+canvas.qrcode {
+	max-width: 100%;
+	height: auto;
+	margin-left: 20px;
+	margin-top: 20px;
+}
 
 
 /* Template B */
@@ -75,10 +101,26 @@
 	padding: 20px;
 	display: flex;
 	overflow: hidden;
-	margin: 10px;
 }
-.name-card{
-	display: flex;
+
+.name-company {
+	text-align: center;
+	color: #3b1d13;
+	padding-top: 28px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.name-company-back {
+	position: absolute;
+	transform: rotate(-90deg);
+	color: #3b1d13;
+	font-weight: bold;
+	margin-top: 25px;
+	margin-right: -60px;
+	margin-top: 25px;
+	font-size: 14px;
+	margin-left: -133px;
 }
 
 .front-card-b {
@@ -100,8 +142,8 @@
 	padding-top: 10px;
 }
 
-.box-infor {
-	margin-top: 65px;
+.name-card .box-infor {
+	margin-top: 10px;
 }
 
 .jobname {
@@ -121,7 +163,7 @@
 }
 
 .icon-infor-b {
-	margin: 3px;
+	margin: 0px 3px 3px 3px;
 	font-size: 12px;
 }
 
@@ -129,6 +171,7 @@
 	font-size: 11px;
 	margin-left: 3px;
 	color: #3b1d13;
+	padding-top: 0px;
 }
 
 .icon-mail {
@@ -155,7 +198,7 @@
 
 .back {
 	color: #fff;
-	margin-left: 105px;
+	padding-left: 105px;
 	font-size: 11px;
 	margin-top: 30px;
 }
@@ -165,8 +208,32 @@
 	font-size: 13px;
 }
 
+.photo {
+	display: flex;
+	margin-top: 30px;
+}
 
+#downloadPage {
+	z-index: 9999;
+	background: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: center;
+	margin-left: 44%;
+	margin-right: 20px;
+}
 
+#downloadVCard {
+	z-index: 9999;
+	padding: 10px;
+	background: #28a745;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
 
 
 
@@ -224,4 +291,216 @@
 
 span {
 	margin: 15px 20px;
+}
+
+/* Template B */
+@media screen and (max-width: 768px) {
+	.name-card-container {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.name-card {
+		width: 100%;
+		height: auto;
+		flex-direction: column;
+		padding: 10px;
+	}
+
+	.triangle {
+		width: 70px;
+		height: 70px;
+	}
+
+	.front {
+		width: 100%;
+		height: auto;
+	}
+
+	.name-company {
+		font-size: 12px;
+		margin-top: 5px;
+	}
+
+	.name-company-back {
+		position: absolute;
+		color: #3b1d13;
+		margin-left: -110px;
+		font-size: 12px;
+		font-weight: bold;
+        margin-top: 18px;
+	}
+
+	.back {
+		width: 100%;
+		height: 200px;
+		font-size: 10px;
+		padding-left: 95px;
+	}
+
+	.my-image {
+		display: flex;
+		padding: 0;
+	}
+
+	.my-image img {
+		width: 60px;
+		height: auto;
+		margin-left: 10px;
+	}
+
+	.name-card-b {
+		width: 100%;
+		height: auto;
+		padding: 10px;
+	}
+
+	.title-b {
+		font-size: 2ex;
+	}
+
+	.infor-b {
+		font-size: 10px;
+	}
+
+	.icon-infor-b {
+		font-size: 10px;
+		margin: 0 2px;
+	}
+
+	.box-detail {
+		width: 90%;
+		height: auto;
+		padding: 20px;
+	}
+
+	#downloadPage {
+		margin-left: auto;
+		margin-right: auto;
+		width: 80%;
+		padding: 10px;
+	}
+
+	#downloadVCard {
+		width: 80%;
+		padding: 10px;
+	}
+
+	canvas.qrcode {
+		max-width: 100%;
+		height: auto;
+		margin-left: 8px;
+	}
+}
+
+/* CSS dành cho màn hình rất nhỏ (dưới 576px) */
+@media screen and (max-width: 576px) {
+	.name-card-container {
+		gap: 5px;
+		/* Giảm khoảng cách thêm nữa */
+	}
+
+	.name-card {
+		font-size: 12px;
+		/* Giảm font chữ */
+	}
+
+	.name-b {
+		font-size: 13px;
+	}
+
+	.jobname {
+		font-size: 11px;
+	}
+
+	.photo {
+		margin-top: 10px;
+	}
+}
+
+.profile-container {
+    max-width: 600px;
+    margin: 3rem auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 15px;
+    border: 2px solid #ddd;
+}
+
+.avatar img {
+    width: 100%;
+    height: auto;
+}
+
+.profile-header h1 {
+    font-size: 24px;
+    color: #2a80fb;
+    margin: 0;
+}
+
+.profile-header p {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.profile-details {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-weight: bold;
+    color: #555;
+}
+
+.value {
+    color: #888;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 15px;
+    }
+
+    .profile-header h1 {
+        font-size: 20px;
+    }
+
+    .profile-header p {
+        font-size: 12px;
+    }
+
+    .detail-row {
+        padding: 8px 0;
+    }
 }
