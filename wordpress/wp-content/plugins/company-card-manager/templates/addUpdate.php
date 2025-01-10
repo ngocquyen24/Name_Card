@@ -1,4 +1,3 @@
-
 <div class="wrap">
     <h1><?php echo $id > 0 ? 'Update Company' : 'Add Company'; ?></h1>
     <form method="post" enctype="multipart/form-data">
@@ -26,21 +25,21 @@
             <tr>
                 <th>Image</th>
                 <td>
-                   
-                   <?php if (!empty($company['image'])): ?>
-                       <!-- Hiển thị thông tin và ảnh hiện tại nếu đã có -->
-                       <input type="file" name="image">
-                       <p>Current Image: <?php echo esc_html($company['image']); ?></p>
-                       <img src="<?php echo wp_upload_dir()['baseurl'] . '/imagesCompany/' . esc_html($company['image']); ?>" alt="Company Image" style="max-width: 150px;">
-                   <?php else: ?>
-                       <!-- Trường nhập file bắt buộc nếu chưa có ảnh -->
-                       <input type="file" name="image" required>
-                   <?php endif; ?>
-                   <?php if ($error_message): ?>
-                       <p class="error" style="color: red;"><?php echo esc_html($error_message); ?></p>
-                   <?php endif; ?>
-               </td>
-               
+
+                    <?php if (!empty($company['image'])): ?>
+                        <!-- Hiển thị thông tin và ảnh hiện tại nếu đã có -->
+                        <input type="file" name="image">
+                        <p>Current Image: <?php echo esc_html($company['image']); ?></p>
+                        <img src="<?php echo wp_upload_dir()['baseurl'] . '/imagesCompany/' . esc_html($company['image']); ?>" alt="Company Image" style="max-width: 150px;">
+                    <?php else: ?>
+                        <!-- Trường nhập file bắt buộc nếu chưa có ảnh -->
+                        <input type="file" name="image" required>
+                    <?php endif; ?>
+                    <?php if ($error_message): ?>
+                        <p class="error" style="color: red;"><?php echo esc_html($error_message); ?></p>
+                    <?php endif; ?>
+                </td>
+
             </tr>
         </table>
         <p><button type="submit" name="save_company" class="button button-primary">Save</button></p>

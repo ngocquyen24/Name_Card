@@ -1,78 +1,21 @@
 .name-card-container {
-	display: flex;
 	justify-content: center;
-	gap: 20px;
-	display: flex;
-	/* Khoảng cách giữa các thẻ */
+	align-items: center;
+	height: 50vh;
 	padding-top: 15%;
 }
-.name-card{
+
+.name-card {
 	display: flex;
 	justify-content: center;
 	gap: 20px;
-	display: flex;
-	/* Khoảng cách giữa các thẻ */
-
 }
+
 
 /* Template A */
 .name-card-a {
-	width: 336px;
-	/* Tương ứng với 3.5 inch (336px = 3.5 * 96 DPI) */
-	height: 192px;
-	/* Tương ứng với 2 inch (192px = 2 * 96 DPI) */
-	font-family: Arial, sans-serif;
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	border: 1px solid #ccc;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	padding: 10px;
-	display: flex;
-	overflow: hidden;
-	color: rgb(0, 0, 0);
-}
-.front-card-a{
-	background-image: url('../images/front-a.png');
-}
-.front{
-	width: 314px;
-	/* Tương ứng với 3.5 inch (336px = 3.5 * 96 DPI) */
-	height: 170px;
-}
-.logo-a{
-	padding: 0px;
-}
-.back-card-a{
-	background-image: url('../images/back-a.png');
-}
-
-.name-company {
-	font-weight: bold;
-}
-.space-company{
-	padding: unset;
-	margin: auto;
-}
-
-.name{
-	margin: 10px;
-}
-
-
-
-
-
-
-
-
-/* Template B */
-
-.name-card-b {
-	width: 336px;
-	/* Tương ứng với 3.5 inch (336px = 3.5 * 96 DPI) */
-	height: 192px;
-	/* Tương ứng với 2 inch (192px = 2 * 96 DPI) */
+	width: 500px;
+	height: 300px;
 	font-family: Arial, sans-serif;
 	background-size: cover;
 	background-position: center;
@@ -82,113 +25,214 @@
 	padding: 20px;
 	display: flex;
 	overflow: hidden;
-	color: rgb(0, 0, 0);
 }
 
-.front-card-b{
+.triangle {
+	width: 100px;
+	height: 100px;
+	background: blue;
+	clip-path: polygon(50% 0%,
+			/* Đỉnh trên cùng */
+			100% 100%,
+			/* Góc dưới bên phải */
+			0% 100%
+			/* Góc dưới bên trái */
+		);
+	border-radius: 30%;
+	/* Bo tròn 3 góc */
+}
+
+.front {
+	width: 458px;
+	/* Tương ứng với 3.5 inch (336px = 3.5 * 96 DPI) */
+	height: 259px;
+}
+
+.logo-a {
+	padding: 0px;
+}
+
+.back-card-a {
+	background-image: url('../images/back-a.png');
+}
+
+.space-company {
+	padding: unset;
+	margin: auto;
+}
+
+.name {
+	margin: 10px;
+}
+
+.my-image {
+	display: flex;
+}
+
+.my-image img {
+	width: 90px;
+	height: fit-content;
+}
+
+
+
+
+
+canvas.qrcode {
+	max-width: 100%;
+	height: auto;
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
+
+/* Template B */
+
+.name-card-b {
+	width: 500px;
+	height: 300px;
+	font-family: Arial, sans-serif;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	border: 1px solid #ccc;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	display: flex;
+	overflow: hidden;
+}
+
+.name-company {
+	text-align: center;
+	color: #3b1d13;
+	padding-top: 28px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.name-company-back {
+	position: absolute;
+	transform: rotate(-90deg);
+	color: #3b1d13;
+	font-weight: bold;
+	margin-top: 25px;
+	margin-right: -60px;
+	margin-top: 25px;
+	font-size: 14px;
+	margin-left: -133px;
+}
+
+.front-card-b {
 	background-image: url('../images/front-b.png');
 }
 
-.logo-b{
+.logo-b {
 	padding: 0px;
 }
-.back-card-b{
+
+.back-card-b {
 	background-image: url('../images/back-b.png');
 }
 
-.line{
+.line {
 	border-right: 1px solid #3b1d13;
 	text-align: right;
 	color: #3b1d13;
 	padding-top: 10px;
 }
 
-.box-infor{
-	margin-top: 40px;
+.name-card .box-infor {
+	margin-top: 10px;
 }
 
-.jobname{
-	font-size: 8px;
+.jobname {
+	font-size: 13px;
 	margin: 0;
 }
 
-.name-b{
-	font-size: 10px;
+.name-b {
+	font-size: 15px;
 	margin: 0;
 	font-weight: bold;
 	padding-bottom: 2px;
 }
 
-.icon-b{
-	text-align: center;
-}
-
-.mail-b {
-	text-align: right;
-	margin: auto;
-	font-size: 8px;
+.gr-infor {
 	display: flex;
-	color: #3b1d13;
-	padding-bottom: 2px;
 }
 
-.mail-b i{
-	font-size: 9px;
-	padding-right: 3px;
+.icon-infor-b {
+	margin: 0px 3px 3px 3px;
+	font-size: 12px;
+}
+
+.infor-b {
+	font-size: 11px;
+	margin-left: 3px;
+	color: #3b1d13;
+	padding-top: 0px;
+}
+
+.icon-mail {
 	color: #f9c626;
 }
-.netwwork-b {
-	text-align: center;
-	margin: auto;
-	font-size: 8px;
-	display: flex;
-	color: #3b1d13;
-	padding-bottom: 2px;
-}
 
-.netwwork-b i{
-	font-size: 9px;
-	padding-right: 3px;
-	margin-top: 2px;
+.icon-network {
 	color: #2a80fb;
 }
-.phone-b {
-	text-align: center;
-	margin: auto;
-	font-size: 8px;
-	display: flex;
-	color: #3b1d13;
-	padding-bottom: 2px;
-}
 
-.phone-b i{
-	font-size: 9px;
-	padding-right: 3px;
-	margin-top: 2px;
+.icon-phone {
 	color: #00c15b;
 }
 
-.location-b  {
-	margin: auto;
-	font-size: 7px;
-	display: flex;
-	color: #3b1d13;
-	padding-left: 1.5px;
-}
-
-.location-b p{
-	padding-left: 4px;
-	margin-bottom: 0;
-}
-
-.location-b i{
-	font-size: 9px;
-	margin-top: 2px;
+.icon-location {
 	color: #e4342b;
+	margin: 2px 4.5px;
+}
+
+.infor-b p {
+	margin-bottom: 7px;
 }
 
 
+.back {
+	color: #fff;
+	padding-left: 105px;
+	font-size: 11px;
+	margin-top: 30px;
+}
 
+.title-b {
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.photo {
+	display: flex;
+	margin-top: 30px;
+}
+
+#downloadPage {
+	z-index: 9999;
+	background: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: center;
+	margin-left: 44%;
+	margin-right: 20px;
+}
+
+#downloadVCard {
+	z-index: 9999;
+	padding: 10px;
+	background: #28a745;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
 
 
 
@@ -246,4 +290,124 @@
 
 span {
 	margin: 15px 20px;
+}
+
+/* Template B */
+@media screen and (max-width: 768px) {
+	.name-card-container {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.name-card {
+		width: 100%;
+		height: auto;
+		flex-direction: column;
+		padding: 10px;
+	}
+
+	.triangle {
+		width: 70px;
+		height: 70px;
+	}
+
+	.front {
+		width: 100%;
+		height: auto;
+	}
+
+	.name-company {
+		font-size: 12px;
+		margin-top: 5px;
+	}
+
+	.name-company-back {
+		position: absolute;
+		color: #3b1d13;
+		margin-left: -110px;
+		font-size: 12px;
+		font-weight: bold;
+        margin-top: 18px;
+	}
+
+	.back {
+		width: 100%;
+		height: 200px;
+		font-size: 10px;
+		padding-left: 95px;
+	}
+
+	.my-image img {
+		width: 70px;
+		height: auto;
+		margin-left: 10px;
+	}
+
+	.name-card-b {
+		width: 100%;
+		height: auto;
+		padding: 10px;
+	}
+
+	.title-b {
+		font-size: 2ex;
+	}
+
+	.infor-b {
+		font-size: 10px;
+	}
+
+	.icon-infor-b {
+		font-size: 10px;
+		margin: 0 2px;
+	}
+
+	.box-detail {
+		width: 90%;
+		height: auto;
+		padding: 20px;
+	}
+
+	#downloadPage {
+		margin-left: auto;
+		margin-right: auto;
+		width: 80%;
+		padding: 10px;
+	}
+
+	#downloadVCard {
+		width: 80%;
+		padding: 10px;
+	}
+
+	canvas.qrcode {
+		max-width: 100%;
+		height: auto;
+		margin: 0;
+	}
+}
+
+/* CSS dành cho màn hình rất nhỏ (dưới 576px) */
+@media screen and (max-width: 576px) {
+	.name-card-container {
+		gap: 5px;
+		/* Giảm khoảng cách thêm nữa */
+	}
+
+	.name-card {
+		font-size: 12px;
+		/* Giảm font chữ */
+	}
+
+	.name-b {
+		font-size: 13px;
+	}
+
+	.jobname {
+		font-size: 11px;
+	}
+
+	.photo {
+		margin-top: 10px;
+	}
 }

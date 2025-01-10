@@ -159,12 +159,6 @@ function ncm_add_edit_form($id = 0)
             exit;
         }
 
-
-
-
-
-
-        
     }
 
     // Chuyển qua trang add và update 
