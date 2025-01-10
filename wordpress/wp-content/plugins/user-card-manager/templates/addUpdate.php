@@ -43,7 +43,7 @@
             <tr>
                 <th>Image</th>
                 <td>
-                   
+
                     <?php if (!empty($card['image'])): ?>
                         <!-- Hiển thị thông tin và ảnh hiện tại nếu đã có -->
                         <input type="file" name="image">

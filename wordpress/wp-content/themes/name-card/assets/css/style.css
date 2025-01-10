@@ -292,3 +292,123 @@ canvas.qrcode {
 span {
 	margin: 15px 20px;
 }
+
+/* Template B */
+@media screen and (max-width: 768px) {
+	.name-card-container {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.name-card {
+		width: 100%;
+		height: auto;
+		flex-direction: column;
+		padding: 10px;
+	}
+
+	.triangle {
+		width: 70px;
+		height: 70px;
+	}
+
+	.front {
+		width: 100%;
+		height: auto;
+	}
+
+	.name-company {
+		font-size: 12px;
+		margin-top: 5px;
+	}
+
+	.name-company-back {
+		position: absolute;
+		color: #3b1d13;
+		margin-left: -110px;
+		font-size: 12px;
+		font-weight: bold;
+        margin-top: 18px;
+	}
+
+	.back {
+		width: 100%;
+		height: 200px;
+		font-size: 10px;
+		padding-left: 95px;
+	}
+
+	.my-image img {
+		width: 70px;
+		height: auto;
+		margin-left: 10px;
+	}
+
+	.name-card-b {
+		width: 100%;
+		height: auto;
+		padding: 10px;
+	}
+
+	.title-b {
+		font-size: 2ex;
+	}
+
+	.infor-b {
+		font-size: 10px;
+	}
+
+	.icon-infor-b {
+		font-size: 10px;
+		margin: 0 2px;
+	}
+
+	.box-detail {
+		width: 90%;
+		height: auto;
+		padding: 20px;
+	}
+
+	#downloadPage {
+		margin-left: auto;
+		margin-right: auto;
+		width: 80%;
+		padding: 10px;
+	}
+
+	#downloadVCard {
+		width: 80%;
+		padding: 10px;
+	}
+
+	canvas.qrcode {
+		max-width: 100%;
+		height: auto;
+		margin: 0;
+	}
+}
+
+/* CSS dành cho màn hình rất nhỏ (dưới 576px) */
+@media screen and (max-width: 576px) {
+	.name-card-container {
+		gap: 5px;
+		/* Giảm khoảng cách thêm nữa */
+	}
+
+	.name-card {
+		font-size: 12px;
+		/* Giảm font chữ */
+	}
+
+	.name-b {
+		font-size: 13px;
+	}
+
+	.jobname {
+		font-size: 11px;
+	}
+
+	.photo {
+		margin-top: 10px;
+	}
+}

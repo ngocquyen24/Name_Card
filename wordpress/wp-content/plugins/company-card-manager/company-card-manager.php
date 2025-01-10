@@ -124,16 +124,15 @@ function cm_add_edit_form($id = 0)
             'profile' => sanitize_textarea_field($_POST['profile']),
         ];
 
-      
-        
-        
-         // Kiểm tra và xử lý tải ảnh (nếu có)
-         if (!empty($_FILES['image']['name'])) {
+
+
+
+        // Kiểm tra và xử lý tải ảnh (nếu có)
+        if (!empty($_FILES['image']['name'])) {
             $image_upload_result = cm_handle_image_upload($_FILES['image']);
             if ($image_upload_result === false) {
                 // Nếu tệp không hợp lệ, lưu thông báo lỗi và không tiếp tục lưu dữ liệu
                 $error_message = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
-                
             } else {
                 // Nếu ảnh hợp lệ, lưu tên ảnh vào dữ liệu
                 $data['image'] = $image_upload_result;
@@ -155,7 +154,6 @@ function cm_add_edit_form($id = 0)
             wp_redirect(admin_url('admin.php?page=company-card-manager'));
             exit;
         }
-
     }
 
     // Chuyển qua trang add và update 
